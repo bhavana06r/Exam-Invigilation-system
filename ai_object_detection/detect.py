@@ -9,7 +9,7 @@ from utils.json_writer import save_output
 # -----------------------------
 # Load YOLO Model
 # -----------------------------
-model = YOLO("yolov8m.pt")
+model = YOLO("yolov8m.pt")   # Better than yolov8n for phone detection
 
 # -----------------------------
 # Open Video
@@ -22,7 +22,7 @@ if not cap.isOpened():
 
 prev_time = time.time()
 
-# Colors for each object
+# Colors
 COLORS = {
     "person": (0, 255, 0),
     "cell phone": (0, 0, 255),
@@ -35,17 +35,12 @@ while True:
 
     ret, frame = cap.read()
 
-    ret, frame = cap.read()
-
-    if ret:
-        print(frame.shape)
-
     if not ret:
         break
 
-    results = model(frame, verbose=True)
+    # Run YOLO
+    results = model(frame, verbose=False)
 
-    # Count objects
     counts = {
         "person": 0,
         "cell phone": 0,
@@ -83,32 +78,31 @@ while True:
                 COLORS[label]
             )
 
-    # --------------------
+    # -----------------------------
     # Status
-    # --------------------
+    # -----------------------------
+    if counts["cell phone"] > 0:
+        status = "PHONE DETECTED"
 
-    suspicious = (
-        counts["cell phone"] > 0 or
-        counts["book"] > 0 or
-        counts["laptop"] > 0
-    )
+    elif counts["book"] > 0:
+        status = "BOOK DETECTED"
 
-    status = "SUSPICIOUS" if suspicious else "NORMAL"
+    elif counts["backpack"] > 0:
+        status = "BACKPACK DETECTED"
 
-    # --------------------
+    else:
+        status = "NORMAL"
+
+    # -----------------------------
     # FPS
-    # --------------------
-
+    # -----------------------------
     current = time.time()
-
-    fps = int(1 / (current - prev_time))
-
+    fps = max(1, int(1 / (current - prev_time)))
     prev_time = current
 
-    # --------------------
+    # -----------------------------
     # Dashboard
-    # --------------------
-
+    # -----------------------------
     draw_dashboard(
         frame,
         counts,
@@ -116,30 +110,19 @@ while True:
         fps
     )
 
-    # --------------------
-    # JSON Output
-    # --------------------
-
+    # -----------------------------
+    # Save JSON
+    # -----------------------------
     output = {
-
         "students": counts["person"],
-
         "phones": counts["cell phone"],
-
         "laptops": counts["laptop"],
-
         "books": counts["book"],
-
         "backpacks": counts["backpack"],
-
         "status": status
-
     }
 
-    save_output(
-        OUTPUT_JSON,
-        output
-    )
+    save_output(OUTPUT_JSON, output)
 
     cv2.imshow("AI Exam Invigilation", frame)
 
@@ -147,5 +130,4 @@ while True:
         break
 
 cap.release()
-
 cv2.destroyAllWindows()
