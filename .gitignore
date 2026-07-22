@@ -1,13 +1,35 @@
-# Python virtual environment
-backend/venv/
-venv/
-
-# Python cache
+# -----------------------------
+# Python
+# -----------------------------
 __pycache__/
 *.pyc
 
-# Node modules
-node_modules/
+# -----------------------------
+# Virtual Environment
+# -----------------------------
+venv/
 
-# Environment variables
-.env
+# -----------------------------
+# YOLO Models
+# -----------------------------
+*.pt
+
+# -----------------------------
+# Videos
+# -----------------------------
+*.mp4
+
+# -----------------------------
+# VS Code
+# -----------------------------
+.vscode/
+
+# -----------------------------
+# Reports
+# -----------------------------
+reports/
+
+# -----------------------------
+# AI Object Detection Output
+# -----------------------------
+ai_object_detection/output/*.json
