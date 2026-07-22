@@ -1,0 +1,12 @@
+# YOLO Models
+*.pt
+
+# Videos
+*.mp4
+
+# Python cache
+__pycache__/
+*.pyc
+
+# JSON Output
+ai_object_detection/output/*.json
